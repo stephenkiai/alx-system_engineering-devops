@@ -1,2 +1,2 @@
 #!/bin/bash
-!echo "reversing input"; exit $?
+tr -d "cC"
