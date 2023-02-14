@@ -1,2 +1,2 @@
 #!/bin/bash
-echo (($POWER/$DIVIDE))
+echo (((export POWER=42784:DIVIDE=32) | $POWER/$DIVIDE))
