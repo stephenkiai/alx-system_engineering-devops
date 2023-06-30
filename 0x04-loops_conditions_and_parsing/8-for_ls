@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+# Display contents of current directory in list format.
+#  part of the name after the first dash only
+
+list=$(ls)
+for item in $list
+do
+  echo "$item" | cut -d '-' -f2
+done
