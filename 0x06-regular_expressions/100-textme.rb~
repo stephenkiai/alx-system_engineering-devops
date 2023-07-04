@@ -1,0 +1,16 @@
+#!/usr/bin/env ruby
+
+file_path = ARGV[0]
+
+if File.file?(file_path)
+  file_content = File.read(file_path)
+  matches = file_content.scan(/Sender: (.+?), Receiver: (.+?), Flags: (.+?)$/)
+  matches.each do |match|
+    sender = match[0]
+    receiver = match[1]
+    flags = match[2]
+    puts "#{sender},#{receiver},#{flags}"
+  end
+else
+  puts "Error: Invalid file path or file does not exist."
+end
