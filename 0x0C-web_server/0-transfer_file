@@ -15,6 +15,7 @@ ssh_key="$4"
 
 # Transfer the file using scp-disable strict host key check
 
-scp -o StrictHostKeyChecking=no -i "$ssh_key" "$path_to_file" "$username"@"$ip_address":~/
+scp -o StrictHostKeyChecking=no -i "$ssh_key"
+"$path_to_file" "$username"@"$ip_address":~/
 
 echo "File transferred successfully to $ip_address"
