@@ -9,7 +9,7 @@ echo 'Hello World!' | sudo tee /var/www/html/index.nginx-debian.html
 # Configure redirection in the Nginx default site configuration
 REDIRECT_CONFIG="\
 location /redirect_me {\n\
-    return 301 http://github.com/;\n\
+    return 301 http://www.youtube.com/;\n\
 }"
 
 sudo sed -i "/location \/ {/,/}/{//!d}; /location \/ {/a $REDIRECT_CONFIG" /etc/nginx/sites-available/default
