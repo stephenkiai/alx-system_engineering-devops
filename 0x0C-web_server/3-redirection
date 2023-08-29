@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
+#redirection
 
-sudo apt-get -y update
+sudo apt-get update
 sudo apt-get -y install nginx
-
+sudo ufw allow 'Nginx HTTP'
 # Replace default Nginx index page
-echo 'Hello World!' | sudo tee /var/www/html/index.nginx-debian.html
+echo 'Hello World!' > /var/www/html/index.nginx-debian.html
 
 # Configure redirection in the Nginx default site configuration
 REDIRECT_CONFIG="\
@@ -14,4 +15,4 @@ location /redirect_me {\n\
 
 sudo sed -i "/location \/ {/,/}/{//!d}; /location \/ {/a $REDIRECT_CONFIG" /etc/nginx/sites-available/default
 
-sudo service nginx start
+sudo service nginx restart
