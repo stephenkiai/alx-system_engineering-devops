@@ -1,58 +1,79 @@
-# Add Nginx stable repository
-apt::ppa { 'nginx/stable':
-  ensure => present,
+# add stable version of nginx
+exec { 'add nginx stable repo':
+  command => 'sudo add-apt-repository ppa:nginx/stable',
+  path    => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
 }
 
-# Update software packages list
-apt::update { 'update_packages':
-  before => Package['nginx'],
+# update software packages list
+exec { 'update packages':
+  command => 'apt-get update',
+  path    => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
 }
 
-# Install Nginx
+# install nginx
 package { 'nginx':
-  ensure => installed,
+  ensure     => 'installed',
 }
 
-# Allow HTTP in firewall
-sudo ufw::allow { 'Nginx HTTP':
-  before => Package['nginx'],
+# allow HTTP
+exec { 'allow HTTP':
+  command => "ufw allow 'Nginx HTTP'",
+  path    => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
+  onlyif  => '! dpkg -l nginx | egrep \'îi.*nginx\' > /dev/null 2>&1',
 }
 
-# Ensure www folder has correct permissions
-file { '/var/www':
-  ensure => directory,
-  mode   => '0755',
+# change folder rights
+exec { 'chmod www folder':
+  command => 'chmod -R 755 /var/www',
+  path    => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
 }
 
-# Create index and 404 pages
+# create index file
 file { '/var/www/html/index.html':
   content => "Hello World!\n",
 }
+
+# create index file
 file { '/var/www/html/404.html':
   content => "Ceci n'est pas une page\n",
 }
 
-# Manage Nginx default configuration
-file { '/etc/nginx/sites-enabled/default':
+# add redirection and error page
+file { 'Nginx default config file':
   ensure  => file,
-  content => template('nginx/default_config.erb'),
-  require => Package['nginx'],
+  path    => '/etc/nginx/sites-enabled/default',
+  content =>
+"server {
+        listen 80 default_server;
+        listen [::]:80 default_server;
+               root /var/www/html;
+        # Add index.php to the list if you are using PHP
+        index index.html index.htm index.nginx-debian.html;
+        server_name _;
+        location / {
+                # First attempt to serve request as file, then
+                # as directory, then fall back to displaying a 404.
+                try_files \$uri \$uri/ =404;
+        }
+        error_page 404 /404.html;
+        location  /404.html {
+            internal;
+        }
+
+        if (\$request_filename ~ redirect_me){
+            rewrite ^ https://www.youtube.com permanent;
+        }
+}
+",
+}
+# restart nginx
+exec { 'restart service':
+  command => 'service nginx restart',
+  path    => '/usr/bin:/usr/sbin:/bin',
 }
 
-# Reload Nginx when configuration changes
+# start service nginx
 service { 'nginx':
-  ensure     => running,
-  hasrestart => true,
-  hasstatus  => true,
-  subscribe  => File['/etc/nginx/sites-enabled/default'],
-}
-
-# Define custom 404 config
-class nginx::custom_config {
-  file { '/etc/nginx/conf.d/custom_config.conf':
-    ensure  => file,
-    content => template('nginx/custom_config.erb'),
-    require => Package['nginx'],
-    notify  => Service['nginx'],
-  }
+  ensure  => running,
+  require => Package['nginx'],
 }
