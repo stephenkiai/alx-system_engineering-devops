@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-
 # Install and configure HAproxy 
 
 # Update package list & install HAProxy
