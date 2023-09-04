@@ -4,7 +4,9 @@
 
 # Update package list & install HAProxy
 sudo apt-get update
-sudo apt-get install -y haproxy
+apt-get install --no-install-recommends software-properties-common
+add-apt-repository ppa:vbernat/haproxy-2.8
+apt-get install haproxy=2.8.\*
 
 # Configure HAProxy
 sudo tee /etc/haproxy/haproxy.cfg > /dev/null <<EOF
