@@ -9,15 +9,15 @@ apt-get -y install haproxy=2.8.\*
 
 # Configure HAProxy
 configuration="\
-frontend http-in
+frontend haproxy
 	 bind *:80
 	 mode http
-    	 default_backend servers
+    	 default_backend webservers
 
 backend webservers
     	balance roundrobin
-    	server web-01 225673-web-01 54.158.221.58:80 check
-    	server web-02 225673-web-02 52.23.245.24:80 check
+    	server 225673-web-01 54.158.221.58:80 check
+    	server 225673-web-02 52.23.245.24:80 check
 "
 # Enable HAProxy as an init service
 sudo cp -a /etc/haproxy/haproxy.cfg{,.orig}
