@@ -7,10 +7,6 @@ sudo service nginx status || sudo service nginx start
 #backup current file
 sudo mv /etc/nginx/sites-enabled/default /etc/nginx/sites-enabled/default-old
 
-# Ensure Nginx listens on port 80 for all IPv4 IPs
-sudo sed -i 's/listen \[::\]:80 default_server ipv6only=on;/listen 0.0.0.0:80;/g' /etc/nginx/sites-available/default
-
-
 #configure nginx with a symbolic link
 ln -s /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default
 
