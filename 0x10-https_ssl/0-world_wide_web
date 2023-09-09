@@ -1,15 +1,15 @@
 #!/usr/bin/env bash
 # Function to display information about a subdomain
 display_info() {
-    domain="$1"
-    subdomain="$2"
-
+    subdomain="$1"
+    domain="$2"
+    
     # Use dig to fetch DNS records and awk to process the output
     dig +short "$subdomain.$domain" | awk -v subdomain="$subdomain" -v domain="$domain" '{
         if (NF == 0) {
             print "The subdomain " subdomain " does not exist for domain " domain;
         } else {
-            print "The subdomain " subdomain " is a " $1 " record and points to " $2;
+            print "The subdomain " subdomain " is a A record and points to " $1;
         }
     }'
 }
@@ -21,19 +21,17 @@ if [ $# -lt 1 ]; then
 fi
 
 domain="$1"
+shift # Remove the domain argument from the list
 
 # Default subdomains to audit
 subdomains=("www" "lb-01" "web-01" "web-02")
 
-if [ $# -eq 1 ]; then
+if [ $# -eq 0 ]; then
     # If only domain is provided, display information for default subdomains
     for subdomain in "${subdomains[@]}"; do
-        display_info "$domain" "$subdomain"
+        display_info "$subdomain" "$domain"
     done
-elif [ $# -eq 2 ]; then
-    # If both domain and subdomain are provided, display information for the specified subdomain
-    display_info "$domain" "$2"
 else
-    echo "Usage: $0 <domain> [<subdomain>]"
-    exit 1
+    # If subdomain is provided, display information for the specified subdomain
+    display_info "$1" "$domain"
 fi
