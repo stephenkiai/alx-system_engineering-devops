@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+#script to find out the current user
+
+sudo -u "$1" whoami
